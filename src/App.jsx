@@ -3,10 +3,9 @@ import React, { useEffect, useState } from "react";
 
 function App() {
   const [movies, setMovies] = useState([]);
-  const [query, setQuery] = useState([]);
+  const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(2);
-
 
   const options = {
     method: "GET",
@@ -16,31 +15,29 @@ function App() {
         "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3YjFmYTU5MTA1M2JlM2M1ZTFhZGQzMmE5MDQ1ODVlNSIsIm5iZiI6MTc1OTU2Mjg3MC4yODYsInN1YiI6IjY4ZTBjYzc2ZjU5MTJmNjk1ODljYTFkZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.r3Xx6EptdM6Q6V_xImb-UESw3ecARsTPq70zAUEdQM0",
     },
   };
+
   useEffect(() => {
-    fetch(
-      `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${page}`,
-      options
-    )
+    const endpoint = query.trim()
+      ? `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+          query
+        )}&include_adult=false&language=en-US&page=${page}`
+      : `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${page}`;
+
+    fetch(endpoint, options)
       .then((res) => res.json())
-      .then((res) => { setMovies(res.results), setTotalPages(res.total_pages) })
+      .then((res) => {
+        setMovies(res.results);
+        setTotalPages(res.total_pages);
+      })
       .catch((err) => console.error(err));
+  }, [page, query]); // refetch when either page or query changes
 
-  }, [page, query]);
-
-  
   async function handleSearch(e) {
     e.preventDefault();
     const cleanUp = query.trim();
     if (!cleanUp) return;
-    const res = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
-        query
-      )}&include_adult=false&language=en-US&page=1`,
-      options
-    );
-    const data = await res.json();
-    setMovies(data.results);
-    setTotalPages(data.total_pages)
+
+    setPage(1); // reset to page 1
   }
   function pageSwitch(direction) {
     setPage((prev) => {
@@ -50,25 +47,26 @@ function App() {
       return prev;
     });
   }
-console.log(totalPages)
+  console.log(totalPages);
   return (
     <>
       <section>
-        <div>
+        <div className=" text-center text-[clamp(1rem,1.6vw,4rem)] capitalize py-[calc(1rem+1vw)]">
           <h1>movie platform</h1>
         </div>
         <div>
-          <form onSubmit={handleSearch}>
+          <form onSubmit={handleSearch} className="flex items-stretch bg-white text-black justify-center border rounded-3xl w-fit m-auto py-1 pr-2 ">
             <input
               type="text"
-              placeholder="name of the movie"
+              placeholder="Search movies..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              className="text-[clamp(1rem,1,3vw,2rem)] px-2 pl-[calc(.5rem+.5vw)] py-2 outline-0 w-[min(90vw,calc(15rem+10vw))]"
             />
-            <button type="submit">Search</button>
+            <button type="submit" className="px-4  rounded-3xl text-white bg-black">Search</button>
           </form>
           {/* movie places */}
-          <div>
+          <div className="py-[calc(2rem+1vw)]">
             <div className="flex flex-col items-center w-full justify-center ">
               {movies.length === 0 ? (
                 <p>loading...</p>
@@ -129,13 +127,13 @@ console.log(totalPages)
                 >
                   prev
                 </button>
-                <span>{ page}</span>
+                <span>{page}</span>
                 <button
                   className="border p-2 shadow rounded"
                   onClick={() => pageSwitch("next")}
                 >
-                 next
-                </button>     
+                  next
+                </button>
               </div>
             </div>
           </div>
