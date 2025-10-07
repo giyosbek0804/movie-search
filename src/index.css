@@ -35,8 +35,24 @@
   .ul li{
     @apply marker:text-blue-500 list-disc marker:text-2xl text-center border marker:p-0 marker:m-0 ;
   }
+  .hamburger div{
+    @apply w-[calc(1.3rem+1vw)] h-1 bg-white my-1  rounded;
+  }
 }
-
+body::before{
+  content: " ";
+  position: fixed;
+  filter: brightness(.5);
+  top: 0;
+  left: 0;
+  background: url("/images/cinema-background.jpg");
+  background-repeat: no-repeat;
+object-fit: cover;
+width: 100%;
+background-position: center;
+height: 100%;
+background-size: cover;
+}
 
 
 @media (prefers-color-scheme: light) {

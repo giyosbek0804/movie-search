@@ -47,23 +47,61 @@ function App() {
       return prev;
     });
   }
+
   console.log(totalPages);
   return (
     <>
-      <section>
+      <section className="relative">
+        <nav className="px-[calc(2rem+2vw)] py-[calc(.8rem+.8vw)] flex items-center justify-between w-full">
+          <p>Free Movie</p>
+          <div className="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <div className="border absolute top-0 right-0 h-full bg-black z-5 hidden flex-col px-[calc(2rem+1vw)] text-center py-[calc(1.5rem+1vw)] ">
+            <div className="hamburger">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <div>
+              <p>ganre</p>
+            </div>
+            <ul className="flex flex-col items-center gap-4 capitalize">
+              <li>
+                <a href="#">favourites</a>
+              </li>
+              <li>
+                <a href="#">Saved</a>
+              </li>
+              <li>
+                <a href="#">History</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
         <div className=" text-center text-[clamp(1rem,1.6vw,4rem)] capitalize py-[calc(1rem+1vw)]">
           <h1>movie platform</h1>
         </div>
         <div>
-          <form onSubmit={handleSearch} className="flex items-stretch bg-white text-black justify-center border rounded-3xl w-fit m-auto py-1 pr-2 ">
+          <form
+            onSubmit={handleSearch}
+            className="flex   items-stretch bg-white text-black justify-center border rounded-3xl w-fit m-auto py-1 pr-2 "
+          >
             <input
               type="text"
               placeholder="Search movies..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="text-[clamp(1rem,1,3vw,2rem)] px-2 pl-[calc(.5rem+.5vw)] py-2 outline-0 w-[min(90vw,calc(15rem+10vw))]"
+              className="text-[clamp(1rem,1,3vw,2rem)] px-2 pl-[calc(.5rem+.5vw)] py-2 outline-0 w-[min(65vw,calc(15rem+10vw))]"
             />
-            <button type="submit" className="px-4  rounded-3xl text-white bg-black">Search</button>
+            <button
+              type="submit"
+              className="px-4  rounded-3xl text-white bg-black"
+            >
+              Search
+            </button>
           </form>
           {/* movie places */}
           <div className="py-[calc(2rem+1vw)]">
@@ -71,16 +109,17 @@ function App() {
               {movies.length === 0 ? (
                 <p>loading...</p>
               ) : (
-                <div className="grid-cols-1  sm:grid-cols-2 bg:gap-10 lg:gap-10 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6   w-[96%]  px-[2%]  grid gap-4  md:p-6 ">
+                <div className="grid-cols-2   sm:grid-cols-2 bg:gap-10 lg:gap-10 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6   w-[96%]  px-[2%]  grid gap-4  md:p-6 ">
                   {movies.map((movie) => (
                     <div
                       key={movie.id}
-                      className="border hover:shadow-2xl hover:scale-[1.05] duration-500 shadow-gray-800 rounded-2xl overflow-hidden w-full h-[32rem] flex flex-col"
+                      className="border  hover:shadow-2xl hover:scale-[1.05] duration-500 shadow-gray-800 rounded-2xl overflow-hidden w-full  flex flex-col"
                     >
                       {/* IMAGE PART */}
-                      <div className="w-full h-[80%] relative img-part">
+                      <div className="w-full h-fit relative img-part">
                         <img
-                          className="object-cover w-full h-full"
+                          loading="lazy"
+                          className="object-cover h-fit w-fit  aspect-5/8 border "
                           src={
                             movie.poster_path
                               ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -98,7 +137,7 @@ function App() {
                       </div>
 
                       {/* TEXT PART */}
-                      <div className="h-[20%] px-4 py-3 flex flex-col justify-between">
+                      <div className="h-fit px-4 py-3 flex flex-col justify-between  ">
                         <p className="font-semibold line-clamp-2 text-[clamp(.9rem,1vw,1.2rem)]">
                           <abbr
                             title={movie.title}
@@ -129,6 +168,7 @@ function App() {
                 </button>
                 <span>{page}</span>
                 <button
+                  id="nextBtn"
                   className="border p-2 shadow rounded"
                   onClick={() => pageSwitch("next")}
                 >
