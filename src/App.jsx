@@ -9,6 +9,7 @@ function App() {
   const [totalPages, setTotalPages] = useState(2);
   const [activeId, setActiveId] = useState(null);
   const [trailer, setTrailer] = useState(null);
+  const [isOpen, setIsOpen] = useState(null);
 
   const options = {
     method: "GET",
@@ -51,27 +52,26 @@ function App() {
     });
   }
 
+  async function getTrailer(movieId) {
+    // if (activeId === movieId) {
+    //   // clicking again hides trailer
+    //   setActiveId(null);
+    //   setTrailer(null);
+    //   return;
+    // }
 
-async function getTrailer(movieId) {
-  if (activeId === movieId) {
-    // clicking again hides trailer
-    setActiveId(null);
-    setTrailer(null);
-    return;
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`
+    );
+    const data = await res.json();
+
+    const trailer = data.results.find(
+      (v) => v.type === "Trailer" && v.site === "YouTube"
+    );
+
+    setTrailer(trailer);
+    setActiveId(movieId);
   }
-
-  const res = await fetch(
-    `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`
-  );
-  const data = await res.json();
-
-  const trailer = data.results.find(
-    (v) => v.type === "Trailer" && v.site === "YouTube"
-  );
-
-  setTrailer(trailer);
-  setActiveId(movieId);
-}
 
   return (
     <>
@@ -108,23 +108,27 @@ async function getTrailer(movieId) {
               {movies.length === 0 ? (
                 <p>loading...</p>
               ) : (
-                <div className="grid-cols-2   sm:grid-cols-2 bg:gap-10 lg:gap-10 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6   w-[96%]  px-[2%]  grid gap-4  md:p-6 ">
+                <div
+                  className={`grid-cols-2   sm:grid-cols-2 bg:gap-10 lg:gap-10 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6   w-[96%]  px-[2%]  grid gap-4  md:p-6 `}
+                >
                   {movies.map((movie) => (
                     <div
-                      onClick={() => getTrailer(movie.id)}
+                      onClick={() =>
+                        getTrailer(movie.id) && setIsOpen(movie.id)
+                      }
                       key={movie.id}
-                      className="border  hover:shadow-2xl hover:scale-[1.05] duration-500 shadow-gray-800 rounded-2xl overflow-hidden w-full  flex flex-col"
+                      className={`border  ${
+                        isOpen === movie.id ? "opened" : ""
+                      } hover:shadow-2xl hover:scale-[1.05] duration-500 shadow-gray-800 movie rounded-2xl overflow-hidden w-full  flex flex-col`}
                     >
                       {/* IMAGE PART */}
                       <div className="w-full h-fit relative img-part">
                         {activeId === movie.id && trailer ? (
                           <iframe
-                            width="100%"
-                            height="315"
                             src={`https://www.youtube.com/embed/${trailer.key}`}
                             title={trailer.name}
                             allowFullScreen
-                            className="rounded-xl"
+                            className="rounded-xl   aspect-16/9  "
                           ></iframe>
                         ) : (
                           <img
@@ -149,7 +153,7 @@ async function getTrailer(movieId) {
                       </div>
 
                       {/* TEXT PART */}
-                      <div className="h-fit px-4 py-3 flex flex-col justify-between  ">
+                      <div className={`h-fit  px-4 py-3 flex gap-4 flex-col justify-center ` }>
                         <p className="font-semibold line-clamp-2 text-[clamp(.9rem,1vw,1.2rem)]">
                           <abbr
                             title={movie.title}
@@ -163,6 +167,13 @@ async function getTrailer(movieId) {
                           {movie.release_date
                             ? movie.release_date.slice(0, 4)
                             : "N/A"}
+                        </p>
+                        <p
+                          className={`${
+                            isOpen === movie.id ? "block" : "hidden"
+                          }`}
+                        >
+                          {movie.overview}
                         </p>
                       </div>
                     </div>
