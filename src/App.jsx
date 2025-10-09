@@ -1,4 +1,5 @@
 import "./App.css";
+const API_KEY = "7b1fa591053be3c5e1add32a904585e5";
 import React, { useEffect, useState } from "react";
 
 function App() {
@@ -6,6 +7,8 @@ function App() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(2);
+  const [activeId, setActiveId] = useState(null);
+  const [trailer, setTrailer] = useState(null);
 
   const options = {
     method: "GET",
@@ -48,16 +51,34 @@ function App() {
     });
   }
 
-  console.log(totalPages);
+
+async function getTrailer(movieId) {
+  if (activeId === movieId) {
+    // clicking again hides trailer
+    setActiveId(null);
+    setTrailer(null);
+    return;
+  }
+
+  const res = await fetch(
+    `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`
+  );
+  const data = await res.json();
+
+  const trailer = data.results.find(
+    (v) => v.type === "Trailer" && v.site === "YouTube"
+  );
+
+  setTrailer(trailer);
+  setActiveId(movieId);
+}
+
   return (
     <>
       <section className="relative">
         <nav className="px-[calc(2rem+2vw)] py-[calc(.8rem+.8vw)] flex items-center justify-between w-full">
           <p>Free Movie</p>
-          <div className="hamburger  text-white capitalize">
-         testing only
-          </div>
-        
+          <div className="hamburger  text-white capitalize">testing only</div>
         </nav>
         <div className=" text-center text-[clamp(1rem,1.6vw,4rem)] capitalize py-[calc(1rem+1vw)]">
           <h1>movie platform</h1>
@@ -90,21 +111,34 @@ function App() {
                 <div className="grid-cols-2   sm:grid-cols-2 bg:gap-10 lg:gap-10 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6   w-[96%]  px-[2%]  grid gap-4  md:p-6 ">
                   {movies.map((movie) => (
                     <div
+                      onClick={() => getTrailer(movie.id)}
                       key={movie.id}
                       className="border  hover:shadow-2xl hover:scale-[1.05] duration-500 shadow-gray-800 rounded-2xl overflow-hidden w-full  flex flex-col"
                     >
                       {/* IMAGE PART */}
                       <div className="w-full h-fit relative img-part">
-                        <img
-                          loading="lazy"
-                          className="object-cover h-fit w-fit  aspect-5/8 border "
-                          src={
-                            movie.poster_path
-                              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                              : "/images/cover.webp"
-                          }
-                          alt={movie.title}
-                        />
+                        {activeId === movie.id && trailer ? (
+                          <iframe
+                            width="100%"
+                            height="315"
+                            src={`https://www.youtube.com/embed/${trailer.key}`}
+                            title={trailer.name}
+                            allowFullScreen
+                            className="rounded-xl"
+                          ></iframe>
+                        ) : (
+                          <img
+                            onClick={() => console.log(movie.title)}
+                            loading="lazy"
+                            className="object-cover h-fit w-fit  aspect-5/8 border "
+                            src={
+                              movie.poster_path
+                                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                                : "/images/cover.webp"
+                            }
+                            alt={movie.title}
+                          />
+                        )}
 
                         <p className="absolute top-5 right-5 rounded-[5px] border py-1 px-2 bg-blurry gap-2">
                           <span className="text-[clamp(.9rem,.9vw,1.1rem)]">
