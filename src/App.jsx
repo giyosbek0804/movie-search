@@ -54,32 +54,10 @@ function App() {
       <section className="relative">
         <nav className="px-[calc(2rem+2vw)] py-[calc(.8rem+.8vw)] flex items-center justify-between w-full">
           <p>Free Movie</p>
-          <div className="hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
+          <div className="hamburger  text-white capitalize">
+         testing only
           </div>
-          <div className="border absolute top-0 right-0 h-full bg-black z-5 hidden flex-col px-[calc(2rem+1vw)] text-center py-[calc(1.5rem+1vw)] ">
-            <div className="hamburger">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            <div>
-              <p>ganre</p>
-            </div>
-            <ul className="flex flex-col items-center gap-4 capitalize">
-              <li>
-                <a href="#">favourites</a>
-              </li>
-              <li>
-                <a href="#">Saved</a>
-              </li>
-              <li>
-                <a href="#">History</a>
-              </li>
-            </ul>
-          </div>
+        
         </nav>
         <div className=" text-center text-[clamp(1rem,1.6vw,4rem)] capitalize py-[calc(1rem+1vw)]">
           <h1>movie platform</h1>

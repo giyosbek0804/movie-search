@@ -35,9 +35,7 @@
   .ul li{
     @apply marker:text-blue-500 list-disc marker:text-2xl text-center border marker:p-0 marker:m-0 ;
   }
-  .hamburger div{
-    @apply w-[calc(1.3rem+1vw)] h-1 bg-white my-1  rounded;
-  }
+
 }
 body::before{
   content: " ";
